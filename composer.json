@@ -32,7 +32,7 @@
       "email": "lukamatosevic5@gmail.com"
     }
   ],
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "license": "MIT",
   "extra": {
     "laravel": {
