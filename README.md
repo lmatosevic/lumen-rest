@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model {
 
-	protected $table = 'article';
+    protected $table = 'article';
 
     protected $fillable = [
         'title',
@@ -145,6 +145,8 @@ Generated REST resource routes are in the following format:
 * **limit** - How many resources to retreive (e.g. 15)
 * **sort** - Filed on which to sort returned resources (e.g. 'first_name')
 * **order** - Ordering of returend resources ('asc' or 'desc')
+
+Example HTTP GET request: `http://site.com/api/resource?skip=30&limit=15&sort=first_name&order=desc`
 
 LICENSE
 ---
