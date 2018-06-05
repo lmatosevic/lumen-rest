@@ -1,5 +1,5 @@
 {
-  "name": "lujo5/lumen-rest",
+  "name": "lujo/lumen-rest",
   "description": "Lumen package for creating simple REST API",
   "type": "library",
   "version": "1.0.0",
@@ -18,17 +18,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Lujo5\\Lumen\\Rest\\": "src"
+      "Lujo\\Lumen\\Rest\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Lujo5\\Lumen\\Rest\\Test": "tests"
+      "Lujo\\Lumen\\Rest\\Test": "tests"
     }
   },
   "authors": [
     {
-      "name": "lujo5",
+      "name": "lujo",
       "email": "lukamatosevic5@gmail.com"
     }
   ],
@@ -37,7 +37,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Lujo5\\Lumen\\Rest\\LumenRestServiceProvider"
+        "Lujo\\Lumen\\Rest\\LumenRestServiceProvider"
       ]
     }
   }

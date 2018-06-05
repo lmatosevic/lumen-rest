@@ -1,6 +1,6 @@
 <?php
 
-namespace Lujo5\Lumen\Rest;
+namespace Lujo\Lumen\Rest;
 
 class RestRoute {
 
@@ -9,7 +9,7 @@ class RestRoute {
      *
      * @param $router \Laravel\Lumen\Routing\Router Router on which this REST route will be applied.
      * @param $prefix string Route prefix (e.g. users)
-     * @param $controller string Full controller name string, controller must extend {@link \Lujo5\Lumen\Rest\RestController}
+     * @param $controller string Full controller name string, controller must extend {@link \Lujo\Lumen\Rest\RestController}
      * @param null $include array Provide an array of route methods to generate for this controller
      * (options: [INDEX, ONE, CREATE, UPDATE, DELETE]). If you want all the methods, ignore this argument or provide null vlaue.
      */

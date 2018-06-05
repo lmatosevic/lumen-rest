@@ -1,6 +1,6 @@
 <?php
 
-namespace Lujo5\Lumen\Rest;
+namespace Lujo\Lumen\Rest;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

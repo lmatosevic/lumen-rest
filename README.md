@@ -4,13 +4,13 @@
 ## Installation
 Install the package using composer by executing following command:
 ```sh
-composer require lujo5/lumen-rest
+composer require lujo/lumen-rest
 ```
 Or you can add in `composer.json` the followign line:
 ```sh
 "require": {
     ...
-    "lujo5/lumen-rest": "*"
+    "lujo/lumen-rest": "*"
 }
 ```
 And then run: 
@@ -66,7 +66,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Article;
-use Lujo5\Lumen\Rest\RestController;
+use Lujo\Lumen\Rest\RestController;
 
 
 class ArticleController extends RestController {
@@ -111,7 +111,7 @@ Example `routes/web.php` rotuing:
 <?php 
 
 use Laravel\Lumen\Routing\Router;
-use Lujo5\Lumen\Rest\RestRoute;
+use Lujo\Lumen\Rest\RestRoute;
 
 /**
  * @var $router Router
