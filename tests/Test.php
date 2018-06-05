@@ -1,6 +1,6 @@
 <?php
 
-namespace Lujo5\Lumen\Rest\Test;
+namespace Lujo\Lumen\Rest\Test;
 
 
 class Test {
