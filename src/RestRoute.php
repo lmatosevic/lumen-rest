@@ -20,7 +20,7 @@ class RestRoute {
      * (options: [INDEX, ONE, CREATE, UPDATE, DELETE]). If you want all the methods, ignore this argument or provide null vlaue.
      */
     public static function route($router, $prefix, $controller, $middlewares = [], $include = null) {
-        if ($include != null) {
+        if ($include !== null) {
             if (is_array($include)) {
                 $include = array_map('strtoupper', $include);
             } else {
