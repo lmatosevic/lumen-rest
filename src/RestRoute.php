@@ -26,19 +26,34 @@ class RestRoute {
             }
         }
         if (self::isIncluded('INDEX', $include)) {
-            $router->get($prefix, $controller . '@index')->middleware(self::resolveMiddlewares('INDEX', $middlewares));
+            $router->get($prefix, [
+                'middleware' => self::resolveMiddlewares('INDEX', $middlewares),
+                'uses' => $controller . '@index'
+            ]);
         }
         if (self::isIncluded('ONE', $include)) {
-            $router->get($prefix . '/{id}', $controller . '@one')->middleware(self::resolveMiddlewares('ONE', $middlewares));
+            $router->get($prefix . '/{id}', [
+                'middleware' => self::resolveMiddlewares('ONE', $middlewares),
+                'uses' => $controller . '@one'
+            ]);
         }
         if (self::isIncluded('CREATE', $include)) {
-            $router->post($prefix, $controller . '@create')->middleware(self::resolveMiddlewares('CREATE', $middlewares));
+            $router->post($prefix, [
+                'middleware' => self::resolveMiddlewares('CREATE', $middlewares),
+                'uses' => $controller . '@create'
+            ]);
         }
         if (self::isIncluded('UPDATE', $include)) {
-            $router->put($prefix . '/{id}', $controller . '@update')->middleware(self::resolveMiddlewares('UPDATE', $middlewares));
+            $router->put($prefix . '/{id}', [
+                'middleware' => self::resolveMiddlewares('UPDATE', $middlewares),
+                'uses' => $controller . '@update'
+            ]);
         }
         if (self::isIncluded('DELETE', $include)) {
-            $router->delete($prefix . '/{id}', $controller . '@delete')->middleware(self::resolveMiddlewares('DELETE', $middlewares));
+            $router->delete($prefix . '/{id}', [
+                'middleware' => self::resolveMiddlewares('DELETE', $middlewares),
+                'uses' => $controller . '@delete'
+            ]);
         }
     }
 
