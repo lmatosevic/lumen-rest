@@ -118,14 +118,18 @@ use Lujo\Lumen\Rest\RestRoute;
  */
 
 // This will create all article routes ('INDEX', 'ONE', 'CREATE', 'UPDATE', 'DELETE') for routes /articles/*
-RestRoute::route($router, 'articles', 'ArticleController');
+RestRoute::route($router, 'articles', 'ArticleController', null, 'middleware1');
 
 // This will create only 'INDEX' and 'ONE' for routes /users/*
-RestRoute::route($router, 'users', 'UserController', ['INDEX', 'ONE']);
+RestRoute::route($router, 'users', 'UserController', ['INDEX', 'ONE'], ['middleware1', 'middleware2']);
+
+// This will create only 'INDEX', 'CREATE' and 'UPDATE' routes for /example/* but apply middlewares only on CREATE and UPDATE
+RestRoute::route($router, 'examples', 'ExampleController', ['INDEX', 'CREATE', 'UPDATE'], 
+        ['CREATE' => ['middleware1', 'middleware2'], 'UPDATE' => 'middleware2']);
 
 // Example subgroup of routes (/article/authors/*)
-$router->group(['prefix' => 'article'], function ($subRoute) {
-        RestRoute::route($subRoute, 'authors', 'AuthorController');
+$router->group(['prefix' => 'article', 'middleware' => 'middleware1'], function ($subRoute) {
+        RestRoute::route($subRoute, 'authors', 'AuthorController'); // All routes with no middlewares
     }
 );
 ```

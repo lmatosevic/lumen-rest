@@ -50,8 +50,14 @@ class RestRoute {
         if ($middlewares == null || empty($middlewares)) {
             return [];
         }
+        if (is_string($middlewares)) {
+            return $middlewares;
+        }
         if (self::isAssociativeArray($middlewares)) {
             $specificMiddlewares = $middlewares[$functionName];
+            if (is_string($specificMiddlewares)) {
+                return $specificMiddlewares;
+            }
             return empty($specificMiddlewares) ? [] : $specificMiddlewares;
         } else {
             return $middlewares;
