@@ -10,14 +10,16 @@ class RestRoute {
      * @param $router \Laravel\Lumen\Routing\Router Router on which this REST route will be applied.
      * @param $prefix string Route prefix (e.g. users)
      * @param $controller string Full controller name string, controller must extend {@link \Lujo\Lumen\Rest\RestController}
-     * @param $include array Provide an array of route functions to generate for this controller
+     * @param $middlewares array|string An array of middleware (or one middleware) keys to be used on specific or all
+     * functions on this route. e.g.1 Apply on all functions: ['first', 'second', 'third'],
+     * e.g.2 Apply specific middleware on specific function: ['INDEX' => 'first', 'CREATE' => ['first', 'second'], 'ONE' => ['first']].
+     * e.g.3 Also, it is possible to combine previous two examples ('third' will be applied to 'CREATE', 'UPDATE', 'DELETE'
+     * (all except 'ONE' and 'INDEX'): ['ONE' => 'first', 'INDEX' => ['first', 'second'], 'third'].
+     * All middlewares used here must be registered using $app->routeMiddleware(...)
+     * @param $include array|string Provide an array of route functions to generate for this controller
      * (options: [INDEX, ONE, CREATE, UPDATE, DELETE]). If you want all the methods, ignore this argument or provide null vlaue.
-     * @param $middlewares array An array of middleware keys to be used on specific or all functions on this route.
-     * e.g.1 apply on all functions: ['auth', 'example', 'check'], e.g.2 apply specific middleware on specific function:
-     * ['INDEX' => ['check'], 'CREATE' => ['auth', 'check'], 'ONE' => ['auth']]. All middlewares used here must be
-     * registered using $app->routeMiddleware(...)
      */
-    public static function route($router, $prefix, $controller, $include = null, $middlewares = []) {
+    public static function route($router, $prefix, $controller, $middlewares = [], $include = null) {
         if ($include != null) {
             if (is_array($include)) {
                 $include = array_map('strtoupper', $include);
@@ -68,24 +70,36 @@ class RestRoute {
         if (is_string($middlewares)) {
             return $middlewares;
         }
-        if (self::isAssociativeArray($middlewares)) {
-            try {
-                $specificMiddlewares = $middlewares[$functionName];
-            } catch (\ErrorException $e) {
-                return [];
-            }
-            if (is_string($specificMiddlewares)) {
-                return $specificMiddlewares;
-            }
-            return empty($specificMiddlewares) ? [] : $specificMiddlewares;
-        } else {
-            return $middlewares;
+        $resolved = self::getAssociativeValues($middlewares, $functionName);
+        if (empty($associativeValues)) {
+            $resolved = self::getNonAssociativeValues($middlewares);
         }
+        return $resolved;
     }
 
-    private static function isAssociativeArray(array $arr) {
-        if (array() === $arr) return false;
-        return array_keys($arr) !== range(0, count($arr) - 1);
+    private static function getNonAssociativeValues($array) {
+        $values = [];
+        for ($i = 0; $i < count($array); $i++) {
+            try {
+                $value = $array[$i];
+                array_push($values, $value);
+            } catch (\ErrorException $e) {
+                continue;
+            }
+        }
+        return $values;
+    }
+
+    private static function getAssociativeValues($array, $key) {
+        try {
+            $specificMiddlewares = $array[$key];
+        } catch (\ErrorException $e) {
+            return [];
+        }
+        if (is_string($specificMiddlewares)) {
+            return $specificMiddlewares;
+        }
+        return empty($specificMiddlewares) ? [] : $specificMiddlewares;
     }
 
 }

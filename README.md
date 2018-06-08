@@ -118,18 +118,18 @@ use Lujo\Lumen\Rest\RestRoute;
  */
 
 // This will create all article routes ('INDEX', 'ONE', 'CREATE', 'UPDATE', 'DELETE') for routes /articles/*
-RestRoute::route($router, 'articles', 'ArticleController', null, 'middleware1');
+RestRoute::route($router, 'articles', 'ArticleController', 'middleware1');
 
 // This will create only 'INDEX' and 'ONE' for routes /users/*
-RestRoute::route($router, 'users', 'UserController', ['INDEX', 'ONE'], ['middleware1', 'middleware2']);
+RestRoute::route($router, 'users', 'UserController', ['middleware1', 'middleware2'], ['INDEX', 'ONE']);
 
 // This will create only 'INDEX', 'CREATE' and 'UPDATE' routes for /example/* but apply middlewares only on CREATE and UPDATE
-RestRoute::route($router, 'examples', 'ExampleController', ['INDEX', 'CREATE', 'UPDATE'], 
-        ['CREATE' => ['middleware1', 'middleware2'], 'UPDATE' => 'middleware2']);
+RestRoute::route($router, 'examples', 'ExampleController', ['CREATE' => ['middleware1', 'middleware2'], 'UPDATE' => 'middleware2'], 
+        ['INDEX', 'CREATE', 'UPDATE']);
 
-// Example subgroup of routes (/article/authors/*)
+// Example subgroup of routes (/article/authors/*) with middleware
 $router->group(['prefix' => 'article', 'middleware' => 'middleware1'], function ($subRoute) {
-        RestRoute::route($subRoute, 'authors', 'AuthorController'); // All routes with no middlewares
+        RestRoute::route($subRoute, 'authors', 'AuthorController');
     }
 );
 ```
