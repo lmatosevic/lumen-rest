@@ -20,7 +20,7 @@ composer install
 
 ## Description
 This Lumen package consists of two classes: `RestRoute` and `RestController`.
-- `RestRoute` does all the routing operations in method `route(...)` for specific resource.
+- `RestRoute` does all the routing operations in function `route(...)` for specific resource.
 - `RestController` should be extended by some other controller class for specific resource.
 
 ## Usage
@@ -55,7 +55,7 @@ class Article extends Model {
 
 ### 2. Create Controller
 After model is created, you can create simple Controller class and EXTEND the RestController class from this package.
-Also, you must implement method `getModel()` which must return Eloquent model created in last step which is the
+Also, you must implement function `getModel()` which must return Eloquent model created in last step which is the
 resource you want to expose through this REST API.
 
 Example Controller class:
@@ -99,12 +99,12 @@ class ArticleController extends RestController {
 }
 ```
 
-All optional override methods are not required if you are not using them, they can be safely left out from
+All optional override functions are not required if you are not using them, they can be safely left out from
 your controller class implementation.
 
 ### 3. Create routing
 After previouse two steps are finished, open your Lumen routes in `routes/web.php`, and create routing structure
-using `RestRoute` class static method `route($router, $prefix, $controller, $include = null)`.
+using `RestRoute` class static function `route($router, $prefix, $controller, $include = null)`.
 
 Example `routes/web.php` rotuing:
 ```php

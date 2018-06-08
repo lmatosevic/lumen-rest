@@ -2,7 +2,7 @@
   "name": "lujo/lumen-rest",
   "description": "Lumen package for creating simple REST API",
   "type": "library",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "keywords": [
     "Lumen",
     "REST",
@@ -23,7 +23,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Lujo\\Lumen\\Rest\\Test": "tests"
+      "Lujo\\Lumen\\Rest\\Test\\": "tests"
     }
   },
   "authors": [
