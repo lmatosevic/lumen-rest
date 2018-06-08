@@ -60,18 +60,18 @@ class RestRoute {
     }
 
     private static function isIncluded($functionName, $include) {
-        return $include == null || in_array($functionName, $include);
+        return $include === null || in_array($functionName, $include);
     }
 
     private static function resolveMiddlewares($functionName, $middlewares) {
-        if ($middlewares == null || empty($middlewares)) {
+        if ($middlewares === null || empty($middlewares)) {
             return [];
         }
         if (is_string($middlewares)) {
             return $middlewares;
         }
         $resolved = self::getAssociativeValues($middlewares, $functionName);
-        if ($resolved == null) {
+        if ($resolved === null) {
             $resolved = self::getNonAssociativeValues($middlewares);
         }
         return $resolved;
