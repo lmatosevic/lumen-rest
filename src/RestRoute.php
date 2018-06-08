@@ -54,7 +54,11 @@ class RestRoute {
             return $middlewares;
         }
         if (self::isAssociativeArray($middlewares)) {
-            $specificMiddlewares = $middlewares[$functionName];
+            try {
+                $specificMiddlewares = $middlewares[$functionName];
+            } catch (\ErrorException $e) {
+                return [];
+            }
             if (is_string($specificMiddlewares)) {
                 return $specificMiddlewares;
             }
