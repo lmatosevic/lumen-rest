@@ -71,7 +71,7 @@ class RestRoute {
             return $middlewares;
         }
         $resolved = self::getAssociativeValues($middlewares, $functionName);
-        if (empty($associativeValues)) {
+        if ($resolved == null) {
             $resolved = self::getNonAssociativeValues($middlewares);
         }
         return $resolved;
@@ -94,7 +94,7 @@ class RestRoute {
         try {
             $specificMiddlewares = $array[$key];
         } catch (\ErrorException $e) {
-            return [];
+            return null;
         }
         if (is_string($specificMiddlewares)) {
             return $specificMiddlewares;
