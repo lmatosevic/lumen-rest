@@ -28,7 +28,7 @@ abstract class RestController extends BaseController {
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i]);
         }
-        return $this->successResponse($models);
+        return response()->json($models);
     }
 
     /**
@@ -40,7 +40,7 @@ abstract class RestController extends BaseController {
     public function one($id) {
         $model = $this->getModel()->find($id);
         $model = $this->beforeGet($model);
-        return $this->successResponse($model);
+        return response()->json($model);
     }
 
     /**
