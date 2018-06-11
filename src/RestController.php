@@ -9,6 +9,16 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 abstract class RestController extends BaseController {
 
     /**
+     * @var array Array of relations to be included in returned model/models.
+     */
+    protected $with = [];
+
+    /**
+     * @var array Array of conditions on which to return models.
+     */
+    protected $where = [];
+
+    /**
      * Return all the models for specific resource. Result set can be modified using GET URL params:
      * skip - How many resources to skip (e.g. 30)
      * limit - How many resources to retreive (e.g. 15)
@@ -19,9 +29,7 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request) {
-        list($skip, $limit, $sort, $order) = Util::paginate($request, $this->getModel());
-        $modelsQuery = $this->getModel()->skip($skip)->take($limit);
-        $models = ($sort != '' && $order != '') ? $modelsQuery->orderBy($sort, $order)->get() : $modelsQuery->get();
+        $models = Util::prepareQuery($request, $this->getModel(), $this->with, $this->where)->get();
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i]);
         }
@@ -35,7 +43,7 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function one($id) {
-        $model = $this->getModel()->find($id);
+        $model = Util::prepareQuery(null, $this->getModel(), $this->with, $this->where)->find($id);
         $model = $this->beforeGet($model);
         return response()->json($model);
     }
