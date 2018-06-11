@@ -50,7 +50,7 @@ class Util {
         }
         list($skip, $limit, $sort, $order) = self::paginateParams($request);
         $query = $query->skip($skip)->take($limit);
-        $query = ($sort != '' && $order != '') ? $query->orderBy($sort, $order)->get() : $query->get();
+        $query = ($sort != '' && $order != '') ? $query->orderBy($sort, $order) : $query;
         return $query;
     }
 }
