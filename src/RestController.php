@@ -19,7 +19,9 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request) {
-        $models = Util::paginate($request, $this->getModel());
+        list($skip, $limit, $sort, $order) = Util::paginate($request, $this->getModel());
+        $modelsQuery = $this->getModel()->skip($skip)->take($limit);
+        $models = ($sort != '' && $order != '') ? $modelsQuery->orderBy($sort, $order)->get() : $modelsQuery->get();
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i]);
         }
