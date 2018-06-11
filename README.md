@@ -70,6 +70,11 @@ use Lujo\Lumen\Rest\RestController;
 
 
 class ArticleController extends RestController {
+    
+    protected $with = ['author', 'comments'];
+    
+    protected $where = [['status', 'ACTIVE'], ['enabled', true]];
+    
     /**
      * @return Model
      */
