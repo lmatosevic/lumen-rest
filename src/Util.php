@@ -37,7 +37,7 @@ class Util {
      * @param array $where Array of conditions on which to return models.
      * @return mixed Returns query builder object. Can be executed by calling get(), find() or other function.
      */
-    public static function prepareQuery(Request $request, Model $model, $with = [], $where = []) {
+    public static function prepareQuery($request, $model, $with = [], $where = []) {
         $query = $model;
         if (is_array($with) && count($with) > 0) {
             $query = $query->with($with);
