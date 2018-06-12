@@ -46,9 +46,9 @@ class Util {
         }
         if (is_array($where) && count($where) > 0) {
             $query = $query->where($where);
-            if ($queryFunction !== null && is_callable($queryFunction)) {
-                $query->where($queryFunction);
-            }
+        }
+        if ($queryFunction !== null && is_callable($queryFunction)) {
+            $query->where($queryFunction);
         }
         if ($request === null) {
             return $query;
