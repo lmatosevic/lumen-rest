@@ -35,15 +35,20 @@ class Util {
      * @param Model $model Model object used as a reference for querying database.
      * @param array $with Array of relations to be included in returned model/models.
      * @param array $where Array of conditions on which to return models.
+     * @param callable $queryFunction Pass query function for making additional complex queries in WHERE section
+     *  e.g. function($query) { $query->where(...)->orWhere(...);} Leave blank or pass null if unused.
      * @return mixed Returns query builder object. Can be executed by calling get(), find() or other function.
      */
-    public static function prepareQuery($request, $model, $with = [], $where = []) {
+    public static function prepareQuery($request, $model, $with = [], $where = [], $queryFunction = null) {
         $query = $model;
         if (is_array($with) && count($with) > 0) {
             $query = $query->with($with);
         }
         if (is_array($where) && count($where) > 0) {
             $query = $query->where($where);
+            if ($queryFunction !== null && is_callable($queryFunction)) {
+                $query->where($queryFunction);
+            }
         }
         if ($request === null) {
             return $query;
