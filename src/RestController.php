@@ -57,7 +57,7 @@ abstract class RestController extends BaseController {
     public function create(Request $request) {
         $data = $this->beforeCreate($request);
         $model = $this->getModel()->query()->create($data);
-        return $this->successResponse(['id' => $model->id]);
+        return Util::successResponse(['id' => $model->id]);
     }
 
     /**
@@ -70,11 +70,11 @@ abstract class RestController extends BaseController {
     public function update(Request $request, $id) {
         $model = $this->getModel()->find($id);
         if ($model == null) {
-            return $this->errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
+            return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
         $data = $this->beforeUpdate($request);
         $model->fill($data)->save();
-        return $this->successResponse(['id' => $id]);
+        return Util::successResponse(['id' => $id]);
     }
 
     /**
@@ -86,32 +86,11 @@ abstract class RestController extends BaseController {
     public function delete($id) {
         $model = $this->getModel()->find($id);
         if ($model == null) {
-            return $this->errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
+            return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
         $this->beforeDelete($model);
         $model->delete();
-        return $this->successResponse(['id' => $id]);
-    }
-
-    /**
-     * Returns the successful JSON response.
-     *
-     * @param $data mixed Data to return to the client.
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function successResponse($data) {
-        return response()->json(['success' => true, 'data' => $data], 200);
-    }
-
-    /**
-     * Returns the error JSON response.
-     *
-     * @param $data mixed Data to return to the client.
-     * @param $code number HTTP error code.
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function errorResponse($data, $code) {
-        return response()->json(['success' => false, 'data' => $data], $code);
+        return Util::successResponse(['id' => $id]);
     }
 
     /**

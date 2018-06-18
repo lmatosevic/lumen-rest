@@ -58,4 +58,40 @@ class Util {
         $query = ($sort != '' && $order != '') ? $query->orderBy($sort, $order) : $query;
         return $query;
     }
+
+    /**
+     * Returns the successful JSON response.
+     * Format of returned content is following:
+     *
+     * HTTP 200 OK
+     * {
+     *  "success": true,
+     *  "data": {...} | [....] | "response text"
+     * }
+     *
+     * @param $data mixed Data to return to the client.
+     * @param array $headers Optional headers to return from server.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public static function successResponse($data, $headers = []) {
+        return response()->json(['success' => true, 'data' => $data], 200, $headers);
+    }
+
+    /**
+     * Returns the error JSON response with provided HTTP status code.
+     * Format of returned content is following:
+     *
+     * HTTP {CODE} {ERROR_DESCRIPTION}
+     * {
+     *  "success": false,
+     *  "data": {...} | [....] | "error text"
+     * }
+     * @param $data mixed Data to return to the client.
+     * @param $code number HTTP error code.
+     * @param array $headers Optional headers to return from server.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public static function errorResponse($data, $code, $headers = []) {
+        return response()->json(['success' => false, 'data' => $data], $code, $headers);
+    }
 }
