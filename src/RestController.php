@@ -57,7 +57,7 @@ abstract class RestController extends BaseController {
     public function create(Request $request) {
         $data = $this->beforeCreate($request);
         $model = $this->getModel()->query()->create($data);
-        return Util::successResponse(['id' => $model->id]);
+        return Util::successResponse(['id' => $model->id], 201);
     }
 
     /**
@@ -74,7 +74,7 @@ abstract class RestController extends BaseController {
         }
         $data = $this->beforeUpdate($request);
         $model->fill($data)->save();
-        return Util::successResponse(['id' => $id]);
+        return Util::successResponse(['id' => $id], 204);
     }
 
     /**
@@ -90,7 +90,7 @@ abstract class RestController extends BaseController {
         }
         $this->beforeDelete($model);
         $model->delete();
-        return Util::successResponse(['id' => $id]);
+        return Util::successResponse(['id' => $id], 202);
     }
 
     /**

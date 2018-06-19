@@ -70,11 +70,12 @@ class Util {
      * }
      *
      * @param $data mixed Data to return to the client.
+     * @param int $code HTTP success status code.
      * @param array $headers Optional headers to return from server.
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function successResponse($data, $headers = []) {
-        return response()->json(['success' => true, 'data' => $data], 200, $headers);
+    public static function successResponse($data, $code = 200, $headers = []) {
+        return response()->json(['success' => true, 'data' => $data], $code, $headers);
     }
 
     /**
@@ -87,11 +88,11 @@ class Util {
      *  "data": {...} | [....] | "error text"
      * }
      * @param $data mixed Data to return to the client.
-     * @param $code number HTTP error code.
+     * @param int $code HTTP error status code.
      * @param array $headers Optional headers to return from server.
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function errorResponse($data, $code, $headers = []) {
+    public static function errorResponse($data, $code = 400, $headers = []) {
         return response()->json(['success' => false, 'data' => $data], $code, $headers);
     }
 }
