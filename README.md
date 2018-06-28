@@ -132,7 +132,7 @@ RestRoute::route($router, 'users', 'UserController', ['middleware1', 'middleware
 RestRoute::route($router, 'examples', 'ExampleController', ['CREATE' => ['middleware1', 'middleware2'], 'UPDATE' => 'middleware2'], 
         ['INDEX', 'CREATE', 'UPDATE']);
 
-// This will create only all routes and apply middleware1 and middleware2 to INDEX and ONE route, on others will middleware3 be applied.
+// This will create all routes and apply middleware1 and middleware2 to INDEX and ONE route, on others will middleware3 be applied.
 RestRoute::route($router, 'users', 'UserController', ['INDEX,ONE' => ['middleware1', 'middleware2'], 'middleware3']);
 
 // Example subgroup of routes (/article/authors/*) with middleware
