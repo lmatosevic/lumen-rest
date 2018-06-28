@@ -9,16 +9,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 abstract class RestController extends BaseController {
 
     /**
-     * @var array Array of relations to be included in returned model/models.
-     */
-    protected $with = [];
-
-    /**
-     * @var array Array of conditions on which to return models.
-     */
-    protected $where = [];
-
-    /**
      * Return all the models for specific resource. Result set can be modified using GET URL params:
      * skip - How many resources to skip (e.g. 30)
      * limit - How many resources to retreive (e.g. 15)
@@ -29,7 +19,7 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request) {
-        $models = Util::prepareQuery($request, $this->getModel(), $this->with, $this->where)->get();
+        $models = Util::prepareQuery($request, $this->getModel(), $this->getWith('INDEX'), $this->getWhere('INDEX'))->get();
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i]);
         }
@@ -43,7 +33,7 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function one($id) {
-        $model = Util::prepareQuery(null, $this->getModel(), $this->with, $this->where)->find($id);
+        $model = Util::prepareQuery(null, $this->getModel(), $this->getWith('ONE'), $this->getWhere('ONE'))->find($id);
         $model = $this->beforeGet($model);
         return response()->json($model);
     }
@@ -68,7 +58,7 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id) {
-        $model = $this->getModel()->find($id);
+        $model = Util::prepareQuery(null, $this->getModel(), [], $this->getWhere('UPDATE'))->find($id);
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
@@ -84,13 +74,33 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function delete($id) {
-        $model = $this->getModel()->find($id);
+        $model = Util::prepareQuery(null, $this->getModel(), [], $this->getWhere('DELETE'))->find($id);
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
         $this->beforeDelete($model);
         $model->delete();
         return Util::successResponse(['id' => $id], 202);
+    }
+
+    /**
+     * Called on index and one functions to specify list of realtions of current resource to be returend.
+     *
+     * @param string $action An function called on this request. (INDEX or ONE)
+     * @return array Array of relations to be included in returned model/models.
+     */
+    protected function getWith($action) {
+        return [];
+    }
+
+    /**
+     * Called on index, one, update, delete functions to specify condition on which to filter data.
+     *
+     * @param string $action An function called on this request. (INDEX, ONE, UPDATE or DELETE)
+     * @return array Array of conditions on which to return models.
+     */
+    protected function getWhere($action) {
+        return [];
     }
 
     /**

@@ -70,11 +70,7 @@ use Lujo\Lumen\Rest\RestController;
 
 
 class ArticleController extends RestController {
-    
-    protected $with = ['author', 'comments'];
-    
-    protected $where = [['status', 'ACTIVE'], ['enabled', true]];
-    
+
     /**
      * @return Model
      */
@@ -100,6 +96,22 @@ class ArticleController extends RestController {
     // Optional override, perform some action on/with model before it is deleted.
     protected function beforeDelete($model) {
         return null;
+    }
+    
+    // Optional override, specify list of relations to return on specific action
+    protected function getWith($action) {
+        if($action === 'INDEX') {
+            return ['text'];
+        }
+        return ['author', 'comments', 'text'];
+    }
+    
+    // Optional override, specify list of where statements to return on specific action
+    protected function getWhere($action) {
+        if($action === 'DELETE') {
+            return [['name', 'Test']];
+        }
+        return [['status', 'ACTIVE'], ['enabled', true]];
     }
 }
 ```
