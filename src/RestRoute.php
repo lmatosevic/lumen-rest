@@ -15,6 +15,7 @@ class RestRoute {
      * e.g.2 Apply specific middleware on specific function: ['INDEX' => 'first', 'CREATE' => ['first', 'second'], 'ONE' => ['first']].
      * e.g.3 Also, it is possible to combine previous two examples ('third' will be applied to 'CREATE', 'UPDATE', 'DELETE'
      * (all except 'ONE' and 'INDEX'): ['ONE' => 'first', 'INDEX' => ['first', 'second'], 'third'].
+     * e.g.4 In addition, function names can be combined using comma delimiter: ['INDEX,ONE' => ['first', 'second'], 'third']
      * All middlewares used here must be registered using $app->routeMiddleware(...)
      * @param $include array|string Provide an array of route functions to generate for this controller
      * (options: [INDEX, ONE, CREATE, UPDATE, DELETE]). If you want all the methods, ignore this argument or provide null vlaue.
@@ -92,14 +93,27 @@ class RestRoute {
 
     private static function getAssociativeValues($array, $key) {
         try {
-            $specificMiddlewares = $array[$key];
+            $middlewares = [];
+            foreach (array_keys($array) as $k) {
+                $functions = explode(',', $k);
+                if ($functions === false) {
+                    continue;
+                }
+                foreach ($functions as $fname) {
+                    if (strtoupper($fname) === $key) {
+                        $values = $array[$k];
+                        if (is_string($values)) {
+                            $values = [$values];
+                        }
+                        $middlewares = array_merge($middlewares, $values);
+                    }
+                }
+            }
+            $specificMiddlewares = array_unique($middlewares);
         } catch (\ErrorException $e) {
             return null;
         }
-        if (is_string($specificMiddlewares)) {
-            return $specificMiddlewares;
-        }
-        return empty($specificMiddlewares) ? [] : $specificMiddlewares;
+        return empty($specificMiddlewares) ? null : $specificMiddlewares;
     }
 
 }
