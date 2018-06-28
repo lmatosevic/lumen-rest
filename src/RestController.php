@@ -19,7 +19,9 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request) {
-        $models = Util::prepareQuery($request, $this->getModel(), $this->getWith('INDEX'), $this->getWhere('INDEX'))->get();
+        $with = $this->getWith($request, 'INDEX');
+        $where = $this->getWhere($request, 'INDEX');
+        $models = Util::prepareQuery($request, $this->getModel(), $with, $where)->get();
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i]);
         }
@@ -29,11 +31,14 @@ abstract class RestController extends BaseController {
     /**
      * Return one model with specific id.
      *
+     * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function one($id) {
-        $model = Util::prepareQuery(null, $this->getModel(), $this->getWith('ONE'), $this->getWhere('ONE'))->find($id);
+    public function one(Request $request, $id) {
+        $with = $this->getWith($request, 'ONE');
+        $where = $this->getWhere($request, 'ONE');
+        $model = Util::prepareQuery(null, $this->getModel(), $with, $where)->find($id);
         $model = $this->beforeGet($model);
         return response()->json($model);
     }
@@ -58,7 +63,8 @@ abstract class RestController extends BaseController {
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id) {
-        $model = Util::prepareQuery(null, $this->getModel(), [], $this->getWhere('UPDATE'))->find($id);
+        $where = $this->getWhere($request, 'UPDATE');
+        $model = Util::prepareQuery(null, $this->getModel(), [], $where)->find($id);
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
@@ -70,11 +76,13 @@ abstract class RestController extends BaseController {
     /**
      * Delete existing model.
      *
+     * @param Request $request
      * @param $id number An id of model which to delete.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function delete($id) {
-        $model = Util::prepareQuery(null, $this->getModel(), [], $this->getWhere('DELETE'))->find($id);
+    public function delete(Request $request, $id) {
+        $where = $this->getWhere($request, 'DELETE');
+        $model = Util::prepareQuery(null, $this->getModel(), [], $where)->find($id);
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
@@ -86,20 +94,22 @@ abstract class RestController extends BaseController {
     /**
      * Called on index and one functions to specify list of realtions of current resource to be returend.
      *
+     * @param Request $request
      * @param string $action An function called on this request. (INDEX or ONE)
      * @return array Array of relations to be included in returned model/models.
      */
-    protected function getWith($action) {
+    protected function getWith($request, $action) {
         return [];
     }
 
     /**
      * Called on index, one, update, delete functions to specify condition on which to filter data.
      *
+     * @param Request $request
      * @param string $action An function called on this request. (INDEX, ONE, UPDATE or DELETE)
      * @return array Array of conditions on which to return models.
      */
-    protected function getWhere($action) {
+    protected function getWhere($request, $action) {
         return [];
     }
 

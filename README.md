@@ -99,7 +99,7 @@ class ArticleController extends RestController {
     }
     
     // Optional override, specify list of relations to return on specific action
-    protected function getWith($action) {
+    protected function getWith($request, $action) {
         if($action === 'INDEX') {
             return ['text'];
         }
@@ -107,7 +107,7 @@ class ArticleController extends RestController {
     }
     
     // Optional override, specify list of where statements to return on specific action
-    protected function getWhere($action) {
+    protected function getWhere($request, $action) {
         if($action === 'DELETE') {
             return [['name', 'Test']];
         }
