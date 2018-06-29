@@ -113,6 +113,13 @@ class ArticleController extends RestController {
         }
         return [['status', 'ACTIVE'], ['enabled', true]];
     }
+    
+    // Optional override, specify additional where query statement in form of a anonymous function
+    protected function getWhereFunction($request, $action) {
+        return function($q) {
+            $q->where('name', 'Test')->orWhere('status', 'ACTIVE');
+        };
+    }
 }
 ```
 

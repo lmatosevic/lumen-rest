@@ -103,7 +103,7 @@ abstract class RestController extends BaseController {
     }
 
     /**
-     * Called on index, one, update, delete functions to specify condition on which to filter data.
+     * Called on index, one, update and delete functions to specify condition on which to filter data.
      *
      * @param Request $request
      * @param string $action An function called on this request. (INDEX, ONE, UPDATE or DELETE)
@@ -111,6 +111,18 @@ abstract class RestController extends BaseController {
      */
     protected function getWhere($request, $action) {
         return [];
+    }
+
+    /**
+     * Called on index, one, update and delete functions to specify additional where query statement in form of a
+     * function: e.g. function($query) { $query->where(...)->orWhere(...)->orWhere(...); }
+     *
+     * @param Request $request
+     * @param string $action An function called on this request. (INDEX, ONE, UPDATE or DELETE)
+     * @return callable Function to be executed while querying data.
+     */
+    protected function getWhereFunction($request, $action) {
+        return null;
     }
 
     /**
