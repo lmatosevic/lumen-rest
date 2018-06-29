@@ -94,6 +94,7 @@ class RestRoute {
     private static function getAssociativeValues($array, $key) {
         try {
             $middlewares = [];
+            $exists = false;
             foreach (array_keys($array) as $k) {
                 $functions = explode(',', $k);
                 if ($functions === false) {
@@ -101,6 +102,7 @@ class RestRoute {
                 }
                 foreach ($functions as $fname) {
                     if (strtoupper($fname) === $key) {
+                        $exists = true;
                         $values = $array[$k];
                         if (is_string($values)) {
                             $values = [$values];
@@ -113,7 +115,10 @@ class RestRoute {
         } catch (\ErrorException $e) {
             return null;
         }
-        return empty($specificMiddlewares) ? null : $specificMiddlewares;
+        if (!$exists) {
+            return null;
+        }
+        return empty($specificMiddlewares) ? [] : $specificMiddlewares;
     }
 
 }
