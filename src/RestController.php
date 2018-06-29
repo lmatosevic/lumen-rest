@@ -21,7 +21,8 @@ abstract class RestController extends BaseController {
     public function index(Request $request) {
         $with = $this->getWith($request, 'INDEX');
         $where = $this->getWhere($request, 'INDEX');
-        $models = Util::prepareQuery($request, $this->getModel(), $with, $where)->get();
+        $query = $this->getWhereFunction($request, 'INDEX');
+        $models = Util::prepareQuery($request, $this->getModel(), $with, $where, $query)->get();
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i]);
         }
@@ -38,7 +39,8 @@ abstract class RestController extends BaseController {
     public function one(Request $request, $id) {
         $with = $this->getWith($request, 'ONE');
         $where = $this->getWhere($request, 'ONE');
-        $model = Util::prepareQuery(null, $this->getModel(), $with, $where)->find($id);
+        $query = $this->getWhereFunction($request, 'ONE');
+        $model = Util::prepareQuery(null, $this->getModel(), $with, $where, $query)->find($id);
         $model = $this->beforeGet($model);
         return response()->json($model);
     }
@@ -64,7 +66,8 @@ abstract class RestController extends BaseController {
      */
     public function update(Request $request, $id) {
         $where = $this->getWhere($request, 'UPDATE');
-        $model = Util::prepareQuery(null, $this->getModel(), [], $where)->find($id);
+        $query = $this->getWhereFunction($request, 'UPDATE');
+        $model = Util::prepareQuery(null, $this->getModel(), [], $where, $query)->find($id);
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
@@ -82,7 +85,8 @@ abstract class RestController extends BaseController {
      */
     public function delete(Request $request, $id) {
         $where = $this->getWhere($request, 'DELETE');
-        $model = Util::prepareQuery(null, $this->getModel(), [], $where)->find($id);
+        $query = $this->getWhereFunction($request, 'DELETE');
+        $model = Util::prepareQuery(null, $this->getModel(), [], $where, $query)->find($id);
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
