@@ -37,7 +37,8 @@ class Util {
      * @param array $where Array of conditions on which to return models.
      * @param callable $queryFunction Pass query function for making additional complex queries in WHERE section
      *  e.g. function($query) { $query->where(...)->orWhere(...);} Leave blank or pass null if unused.
-     * @return mixed Returns query builder object. Can be executed by calling get(), find() or other function.
+     * @return mixed Returns query builder object. Can be executed by calling get(), find() or other function. And total
+     * count of items which meet the search criteria without skip and limit. Result array($query, $count).
      */
     public static function prepareQuery($request, $model, $with = [], $where = [], $queryFunction = null) {
         $query = $model;
@@ -54,9 +55,10 @@ class Util {
             return $query;
         }
         list($skip, $limit, $sort, $order) = self::paginateParams($request);
+        $count = $query->count();
         $query = $query->skip($skip)->take($limit);
         $query = ($sort != '' && $order != '') ? $query->orderBy($sort, $order) : $query;
-        return $query;
+        return array($query, $count);
     }
 
     /**
