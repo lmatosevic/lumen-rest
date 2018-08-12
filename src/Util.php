@@ -2,6 +2,7 @@
 
 namespace Lujo\Lumen\Rest;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,26 +39,12 @@ class Util {
      * @param callable $queryFunction Pass query function for making additional complex queries in WHERE section
      *  e.g. function($query) { $query->where(...)->orWhere(...);} Leave blank or pass null if unused.
      * @param array $whereHas Array of relational conditions for search criteria on relation objects.
-     * (e.g. ['items' => function($q) { $q->where('name', 'xyz') }, 'article' => function($q) {...}]
+     * (e.g. ['items' => [function($q) { $q->where('name', 'xyz') }, '>=', 1], 'article' => [function($q) {...}]]
      * @return mixed Returns query builder object. Can be executed by calling get(), find() or other function.
      */
     public static function prepareQuery($request, $model, $with = [], $where = [], $queryFunction = null,
                                         $whereHas = []) {
-        $query = $model;
-        if (is_array($with) && count($with) > 0) {
-            $query = $query->with($with);
-        }
-        if (is_array($where) && count($where) > 0) {
-            $query = $query->where($where);
-        }
-        if ($queryFunction !== null && is_callable($queryFunction)) {
-            $query->where($queryFunction);
-        }
-        if ($whereHas !== null && count($whereHas) > 0) {
-            foreach ($whereHas as $hasKey => $hasFunc) {
-                $query->whereHas($hasKey, $hasFunc);
-            }
-        }
+        $query = self::prepareWithAndWhere($model, $with, $where, $queryFunction, $whereHas);
         if ($request === null) {
             return $query;
         }
@@ -80,29 +67,16 @@ class Util {
      * @param callable $queryFunction Pass query function for making additional complex queries in WHERE section
      *  e.g. function($query) { $query->where(...)->orWhere(...);} Leave blank or pass null if unused.
      * @param array $whereHas Array of relational conditions for search criteria on relation objects.
-     * (e.g. ['items' => function($q) { $q->where('name', 'xyz') }, 'article' => function($q) {...}]
+     * (e.g. ['items' => [function($q) { $q->where('name', 'xyz') }, '>=', 1], 'article' => [function($q) {...}]]
      * @return array Returns query builder object. Can be executed by calling get(), find() or other function. And total
      * count of items which meet the search criteria without skip and limit. Result array($query, $count).
      */
     public static function prepareQueryWithCount($request, $model, $with = [], $where = [], $queryFunction = null,
                                                  $whereHas = []) {
-        $query = $model;
-        if (is_array($with) && count($with) > 0) {
-            $query = $query->with($with);
-        }
-        if (is_array($where) && count($where) > 0) {
-            $query = $query->where($where);
-        }
-        if ($queryFunction !== null && is_callable($queryFunction)) {
-            $query->where($queryFunction);
-        }
-        if ($whereHas !== null && count($whereHas) > 0) {
-            foreach ($whereHas as $hasKey => $hasFunc) {
-                $query->whereHas($hasKey, $hasFunc);
-            }
-        }
+        $query = self::prepareWithAndWhere($model, $with, $where, $queryFunction, $whereHas);
         if ($request === null) {
-            return $query;
+            $count = $query->count();
+            return array($query, $count);
         }
         list($skip, $limit, $sort, $order) = self::paginateParams($request);
         $count = $query->count();
@@ -146,5 +120,47 @@ class Util {
      */
     public static function errorResponse($data, $code = 400, $headers = []) {
         return response()->json(['success' => false, 'data' => $data], $code, $headers);
+    }
+
+    /**
+     * @param $model Model
+     * @param $with array
+     * @param $where array
+     * @param $queryFunction callable
+     * @param $whereHas array
+     * @return Builder
+     */
+    private static function prepareWithAndWhere($model, $with, $where, $queryFunction, $whereHas) {
+        $query = $model;
+        if (is_array($with) && count($with) > 0) {
+            $query = $query->with($with);
+        }
+        if (is_array($where) && count($where) > 0) {
+            $query = $query->where($where);
+        }
+        if ($queryFunction !== null && is_callable($queryFunction)) {
+            $query->where($queryFunction);
+        }
+        if ($whereHas !== null && count($whereHas) > 0) {
+            foreach ($whereHas as $hasKey => $hasValue) {
+                $func = null;
+                $operator = '>=';
+                $count = 1;
+                if ($hasValue === null || !is_array($hasValue) || count($hasValue) === 0 ) {
+                    continue;
+                }
+                if (count($hasValue) >= 1) {
+                    $func = $hasValue[0];
+                }
+                if (count($hasValue) >= 2) {
+                    $operator = $hasValue[1];
+                }
+                if (count($hasValue) >= 3) {
+                    $count = $hasValue[2];
+                }
+                $query->whereHas($hasKey, $func, $operator, $count);
+            }
+        }
+        return $query;
     }
 }
