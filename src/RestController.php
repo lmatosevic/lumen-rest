@@ -24,7 +24,7 @@ abstract class RestController extends BaseController {
         $query = $this->getWhereFunction($request, 'INDEX');
         $models = Util::prepareQuery($request, $this->getModel(), $with, $where, $query)->get();
         for ($i = 0; $i < count($models); $i++) {
-            $models[$i] = $this->beforeGet($models[$i]);
+            $models[$i] = $this->beforeGet($models[$i], $request);
         }
         return response()->json($models);
     }
@@ -41,7 +41,7 @@ abstract class RestController extends BaseController {
         $where = $this->getWhere($request, 'ONE');
         $query = $this->getWhereFunction($request, 'ONE');
         $model = Util::prepareQuery(null, $this->getModel(), $with, $where, $query)->find($id);
-        $model = $this->beforeGet($model);
+        $model = $this->beforeGet($model, $request);
         return response()->json($model);
     }
 
@@ -90,7 +90,7 @@ abstract class RestController extends BaseController {
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
-        $this->beforeDelete($model);
+        $this->beforeDelete($model, $request);
         $model->delete();
         return Util::successResponse(['id' => $id], 202);
     }
@@ -133,9 +133,10 @@ abstract class RestController extends BaseController {
      * Called before returning model from controller, can retrun updated model with some extra data.
      *
      * @param $model Model
+     * @param $request Request
      * @return Model
      */
-    protected function beforeGet($model) {
+    protected function beforeGet($model, $request) {
         return $model;
     }
 
@@ -165,9 +166,10 @@ abstract class RestController extends BaseController {
      * Called before deleting model from database.
      *
      * @param $model Model
+     * @param $request Request
      * @return null
      */
-    protected function beforeDelete($model) {
+    protected function beforeDelete($model, $request) {
         return null;
     }
 
