@@ -53,8 +53,12 @@ abstract class RestController extends BaseController {
      */
     public function create(Request $request) {
         $data = $this->beforeCreate($request);
-        $model = $this->getModel()->query()->create($data);
-        return Util::successResponse(['id' => $model->id], 201);
+        if ($data) {
+            $model = $this->getModel()->query()->create($data);
+            return Util::successResponse(['id' => $model->id], 201);
+        } else {
+            return Util::successResponse(['id' => null, 'description' => 'Action avoided']);
+        }
     }
 
     /**
@@ -72,8 +76,12 @@ abstract class RestController extends BaseController {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
         $data = $this->beforeUpdate($request);
-        $model->fill($data)->save();
-        return Util::successResponse(['id' => $id], 204);
+        if ($data) {
+            $model->fill($data)->save();
+            return Util::successResponse(['id' => $id], 204);
+        } else {
+            return Util::successResponse(['id' => $id, 'description' => 'Action avoided']);
+        }
     }
 
     /**
@@ -90,9 +98,13 @@ abstract class RestController extends BaseController {
         if ($model == null) {
             return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
         }
-        $this->beforeDelete($model, $request);
-        $model->delete();
-        return Util::successResponse(['id' => $id], 202);
+        $result = $this->beforeDelete($model, $request);
+        if ($result) {
+            $model->delete();
+            return Util::successResponse(['id' => $id], 202);
+        } else {
+            return Util::successResponse(['id' => $id, 'description' => 'Action avoided']);
+        }
     }
 
     /**
@@ -142,10 +154,10 @@ abstract class RestController extends BaseController {
 
     /**
      * Called before creating new model with request data, used for adding additional data or updating existing data
-     * from the request.
+     * from the request. Return null or false to avoid creating model.
      *
      * @param $request Request
-     * @return mixed
+     * @return mixed|boolean|null
      */
     protected function beforeCreate($request) {
         return $request->all();
@@ -153,24 +165,24 @@ abstract class RestController extends BaseController {
 
     /**
      * Called before updating existing model with request data, used for adding additional data or updating existing
-     * data from the request.
+     * data from the request. Return null or false to avoid creating model.
      *
      * @param $request Request
-     * @return mixed
+     * @return mixed|boolean|null
      */
     protected function beforeUpdate($request) {
         return $request->all();
     }
 
     /**
-     * Called before deleting model from database.
+     * Called before deleting model from database. Return null or false to avoid creating model.
      *
      * @param $model Model
      * @param $request Request
-     * @return null
+     * @return boolean|null
      */
     protected function beforeDelete($model, $request) {
-        return null;
+        return true;
     }
 
     /**
