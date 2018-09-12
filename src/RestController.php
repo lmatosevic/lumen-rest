@@ -165,7 +165,7 @@ abstract class RestController extends BaseController {
 
     /**
      * Called before updating existing model with request data, used for adding additional data or updating existing
-     * data from the request. Return null or false to avoid creating model.
+     * data from the request. Return null or false to avoid updating model.
      *
      * @param $request Request
      * @return mixed|boolean|null
@@ -175,7 +175,7 @@ abstract class RestController extends BaseController {
     }
 
     /**
-     * Called before deleting model from database. Return null or false to avoid creating model.
+     * Called before deleting model from database. Return null or false to avoid deleting model.
      *
      * @param $model Model
      * @param $request Request
