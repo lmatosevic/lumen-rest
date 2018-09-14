@@ -55,6 +55,7 @@ abstract class RestController extends BaseController {
         $data = $this->beforeCreate($request);
         if ($data) {
             $model = $this->getModel()->query()->create($data);
+            $this->afterCreate($request, $model);
             return Util::successResponse(['id' => $model->id], 201);
         } else {
             return Util::successResponse(['id' => null, 'description' => 'Action avoided']);
@@ -78,6 +79,7 @@ abstract class RestController extends BaseController {
         $data = $this->beforeUpdate($request);
         if ($data) {
             $model->fill($data)->save();
+            $this->afterUpdate($request, $model);
             return Util::successResponse(['id' => $id], 204);
         } else {
             return Util::successResponse(['id' => $id, 'description' => 'Action avoided']);
@@ -101,6 +103,7 @@ abstract class RestController extends BaseController {
         $result = $this->beforeDelete($model, $request);
         if ($result) {
             $model->delete();
+            $this->afterDelete($request, $model);
             return Util::successResponse(['id' => $id], 202);
         } else {
             return Util::successResponse(['id' => $id, 'description' => 'Action avoided']);
@@ -172,6 +175,36 @@ abstract class RestController extends BaseController {
      */
     protected function beforeUpdate($request) {
         return $request->all();
+    }
+
+    /**
+     * Called after the model is successfuly created. Here is possible to perform event logging or notifications.
+     *
+     * @param $request Request
+     * @param $model Model
+     */
+    protected function afterCreate($request, $model) {
+        // no-op
+    }
+
+    /**
+     * Called after the model is successfuly updated. Here is possible to perform event logging or notifications.
+     *
+     * @param $request Request
+     * @param $model Model
+     */
+    protected function afterUpdate($request, $model) {
+        // no-op
+    }
+
+    /**
+     * Called after the model is successfuly deleted. Here is possible to perform event logging or notifications.
+     *
+     * @param $request Request
+     * @param $model Model
+     */
+    protected function afterDelete($request, $model) {
+        // no-op
     }
 
     /**
