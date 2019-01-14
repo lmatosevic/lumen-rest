@@ -41,6 +41,9 @@ abstract class RestController extends BaseController {
         $where = $this->getWhere($request, 'ONE');
         $query = $this->getWhereFunction($request, 'ONE');
         $model = Util::prepareQuery(null, $this->getModel(), $with, $where, $query)->find($id);
+        if ($model == null) {
+            return Util::errorResponse(['reason' => "Entity with {$id} id does not exist"], 404);
+        }
         $model = $this->beforeGet($model, $request);
         return response()->json($model);
     }
