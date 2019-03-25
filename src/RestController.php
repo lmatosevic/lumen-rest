@@ -15,6 +15,12 @@ abstract class RestController extends BaseController {
      * sort - Filed on which to sort returned resources (e.g. 'first_name')
      * order - Ordering of returend resources ('asc' or 'desc')
      *
+     * Also this method can return following count headers, primarly used for paginated requests:
+     * X-Result-Count - number of items in resulting set that match search criteria (number of returned items)
+     * X-Total-Count - number of total items in database that match search criteria (without skip, limit params)
+     *
+     * Headers can be disabled by overriding and returning false value from withCountHeaders($request) method.
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -22,11 +28,16 @@ abstract class RestController extends BaseController {
         $with = $this->getWith($request, 'INDEX');
         $where = $this->getWhere($request, 'INDEX');
         $query = $this->getWhereFunction($request, 'INDEX');
-        $models = Util::prepareQuery($request, $this->getModel(), $with, $where, $query)->get();
+        list($indexQuery, $totalCount) = Util::prepareQueryWithCount($request, $this->getModel(), $with, $where, $query);
+        $models = $indexQuery->get();
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i], $request);
         }
-        return response()->json($models);
+        $response = response()->json($models);
+        if ($this->withCountHeaders($request) === true) {
+            $response->withHeaders(['X-Result-Count' => count($models), 'X-Total-Count' => $totalCount]);
+        }
+        return $response;
     }
 
     /**
@@ -218,6 +229,17 @@ abstract class RestController extends BaseController {
      * @return boolean|null
      */
     protected function beforeDelete($model, $request) {
+        return true;
+    }
+
+    /**
+     * Called before returning models from database using INDEX method. Return null or false to avoid adding the
+     * additional headers to the response (X-Result-Count and X-Total-Count).
+     *
+     * @param $request Request
+     * @return boolean|null
+     */
+    protected function withCountHeaders($request) {
         return true;
     }
 
