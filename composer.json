@@ -2,7 +2,7 @@
   "name": "lujo/lumen-rest",
   "description": "Lumen package for creating simple REST API",
   "type": "library",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "keywords": [
     "Lumen",
     "REST",

@@ -49,7 +49,9 @@ class Util {
             return $query;
         }
         list($skip, $limit, $sort, $order) = self::paginateParams($request);
-        $query = $query->skip($skip);
+        if ($skip > 0) {
+            $query = $query->skip($skip);
+        }
         if ($limit > 0) {
             $query = $query->take($limit);
         }
@@ -83,7 +85,9 @@ class Util {
         }
         list($skip, $limit, $sort, $order) = self::paginateParams($request);
         $count = $query->count();
-        $query = $query->skip($skip);
+        if ($skip > 0) {
+            $query = $query->skip($skip);
+        }
         if ($limit > 0) {
             $query = $query->take($limit);
         }
