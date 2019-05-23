@@ -49,7 +49,10 @@ class Util {
             return $query;
         }
         list($skip, $limit, $sort, $order) = self::paginateParams($request);
-        $query = $query->skip($skip)->take($limit);
+        $query = $query->skip($skip);
+        if ($limit > 0) {
+            $query = $query->take($limit);
+        }
         $query = ($sort != '' && $order != '') ? $query->orderBy($sort, $order) : $query;
         return $query;
     }
@@ -80,7 +83,10 @@ class Util {
         }
         list($skip, $limit, $sort, $order) = self::paginateParams($request);
         $count = $query->count();
-        $query = $query->skip($skip)->take($limit);
+        $query = $query->skip($skip);
+        if ($limit > 0) {
+            $query = $query->take($limit);
+        }
         $query = ($sort != '' && $order != '') ? $query->orderBy($sort, $order) : $query;
         return array($query, $count);
     }
@@ -146,7 +152,7 @@ class Util {
                 $func = null;
                 $operator = '>=';
                 $count = 1;
-                if ($hasValue === null || !is_array($hasValue) || count($hasValue) === 0 ) {
+                if ($hasValue === null || !is_array($hasValue) || count($hasValue) === 0) {
                     continue;
                 }
                 if (count($hasValue) >= 1) {
