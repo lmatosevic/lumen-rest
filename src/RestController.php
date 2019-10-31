@@ -69,7 +69,10 @@ abstract class RestController extends BaseController {
         $data = $this->beforeCreate($request);
         if ($data) {
             $model = $this->getModel()->query()->create($data);
-            $this->afterCreate($request, $model);
+            $after = $this->afterCreate($request, $model);
+            if ($after) {
+                return $after;
+            }
             return Util::successResponse(['id' => $model->id], 201);
         } else {
             return Util::successResponse(['id' => null, 'description' => 'Action avoided']);
@@ -93,7 +96,10 @@ abstract class RestController extends BaseController {
         $data = $this->beforeUpdate($request);
         if ($data) {
             $model->fill($data)->save();
-            $this->afterUpdate($request, $model);
+            $after = $this->afterUpdate($request, $model);
+            if ($after) {
+                return $after;
+            }
             return Util::successResponse(['id' => $id], 204);
         } else {
             return Util::successResponse(['id' => $id, 'description' => 'Action avoided']);
@@ -117,7 +123,10 @@ abstract class RestController extends BaseController {
         $result = $this->beforeDelete($model, $request);
         if ($result) {
             $model->delete();
-            $this->afterDelete($request, $model);
+            $after= $this->afterDelete($request, $model);
+            if ($after) {
+                return $after;
+            }
             return Util::successResponse(['id' => $id], 202);
         } else {
             return Util::successResponse(['id' => $id, 'description' => 'Action avoided']);
@@ -192,7 +201,19 @@ abstract class RestController extends BaseController {
     }
 
     /**
-     * Called after the model is successfuly created. Here is possible to perform event logging or notifications.
+     * Called before deleting model from database. Return null or false to avoid deleting model.
+     *
+     * @param $model Model
+     * @param $request Request
+     * @return boolean|null
+     */
+    protected function beforeDelete($model, $request) {
+        return true;
+    }
+
+    /**
+     * Called after the model is successfully created. Here is possible to perform event logging, notifications or return
+     * alternative resposne that should be returned from this endpoint.
      *
      * @param $request Request
      * @param $model Model
@@ -202,7 +223,8 @@ abstract class RestController extends BaseController {
     }
 
     /**
-     * Called after the model is successfuly updated. Here is possible to perform event logging or notifications.
+     * Called after the model is successfully updated. Here is possible to perform event logging, notifications or return
+     * alternative resposne that should be returned from this endpoint.
      *
      * @param $request Request
      * @param $model Model
@@ -212,24 +234,14 @@ abstract class RestController extends BaseController {
     }
 
     /**
-     * Called after the model is successfuly deleted. Here is possible to perform event logging or notifications.
+     * Called after the model is successfully deleted. Here is possible to perform event levent logging, notifications
+     * or return alternative resposne that should be returned from this endpoint.
      *
      * @param $request Request
      * @param $model Model
      */
     protected function afterDelete($request, $model) {
         // no-op
-    }
-
-    /**
-     * Called before deleting model from database. Return null or false to avoid deleting model.
-     *
-     * @param $model Model
-     * @param $request Request
-     * @return boolean|null
-     */
-    protected function beforeDelete($model, $request) {
-        return true;
     }
 
     /**
