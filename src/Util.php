@@ -149,7 +149,7 @@ class Util {
             $query = $query->where($where);
         }
         if ($queryFunction !== null && is_callable($queryFunction)) {
-            $query->where($queryFunction);
+            $query = $query->where($queryFunction);
         }
         if ($whereHas !== null && count($whereHas) > 0) {
             foreach ($whereHas as $hasKey => $hasValue) {
