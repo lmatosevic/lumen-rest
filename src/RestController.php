@@ -33,7 +33,15 @@ abstract class RestController extends BaseController {
         for ($i = 0; $i < count($models); $i++) {
             $models[$i] = $this->beforeGet($models[$i], $request);
         }
-        $response = response()->json($models);
+        if ($this->withCountMetadata($request) === true) {
+            $response = response()->json([
+                'result_count' => count($models),
+                'total_count' => $totalCount,
+                'data' => $models
+            ]);
+        } else {
+            $response = response()->json($models);
+        }
         if ($this->withCountHeaders($request) === true) {
             $response->withHeaders(['X-Result-Count' => count($models), 'X-Total-Count' => $totalCount]);
         }
@@ -253,6 +261,18 @@ abstract class RestController extends BaseController {
      */
     protected function withCountHeaders($request) {
         return true;
+    }
+
+    /**
+     * Called before returning models from database using INDEX method. Return true to add the additional metadata to
+     * the response JSON (result_count and total_count) and store resulting array inside data field.
+     * E.g. {result_count: 10, total_count: 45, data: [...results]}.
+     *
+     * @param Request $request
+     * @return boolean|null
+     */
+    protected function withCountMetadata($request) {
+        return false;
     }
 
     /**
