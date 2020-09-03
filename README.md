@@ -184,35 +184,41 @@ Generated REST resource routes are in the following format:
 * **sort** - Filed on which to sort returned resources (e.g. 'first_name')
 * **order** - Ordering of returend resources ('asc' or 'desc')
 
-**Example HTTP GET request:** `http://site.com/api/resource?skip=30&limit=15&sort=first_name&order=desc`
+**Example HTTP GET request:** `http://site.com/api/resource?skip=30&limit=6&sort=name&order=desc`
 
 **Response:**
 
 _Headers:_
 ```
 Content-type: application/json
-X-Total-Count: 45
-X-Result-Count: 10
+X-Total-Count: 10
+X-Result-Count: 6
 ```
 
 _Body when method withCountMetadata() returns false:_
 ```
 [
-    {id: 1, name: 'Resource name', description: 'Some resource description'}, 
-    {id: 1, name: 'Resource name', description: 'Some resource description'}, 
-    {id: 1, name: 'Resource name', description: 'Some resource description'}
+    {"id": 31, "resource_name": "Resource name", "description": "Some resource description"}, 
+    {"id": 32, "resource_name": "Resource name", "description": "Some resource description"},
+    {"id": 33, "resource_name": "Resource name", "description": "Some resource description"}, 
+    {"id": 34, "resource_name": "Resource name", "description": "Some resource description"}, 
+    {"id": 35, "resource_name": "Resource name", "description": "Some resource description"},
+    {"id": 36, "resource_name": "Resource name", "description": "Some resource description"}
 ]
 ```
 
 _Body when method withCountMetadata() returns true:_
 ```
 {
-    result_count: 10, 
-    total_count: 45,
+    total_count: 10,
+    result_count: 6,
     data: [
-        {id: 1, name: 'Resource name', description: 'Some resource description'}, 
-        {id: 1, name: 'Resource name', description: 'Some resource description'}, 
-        {id: 1, name: 'Resource name', description: 'Some resource description'}
+        {"id": 31, "resource_name": "Resource name", "description": "Some resource description"}, 
+        {"id": 32, "resource_name": "Resource name", "description": "Some resource description"},
+        {"id": 33, "resource_name": "Resource name", "description": "Some resource description"}, 
+        {"id": 34, "resource_name": "Resource name", "description": "Some resource description"}, 
+        {"id": 35, "resource_name": "Resource name", "description": "Some resource description"},
+        {"id": 36, "resource_name": "Resource name", "description": "Some resource description"}
     ]
 }
 ```
