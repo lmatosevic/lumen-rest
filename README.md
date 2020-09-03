@@ -120,6 +120,13 @@ class ArticleController extends RestController {
             $q->where('name', 'Test')->orWhere('status', 'ACTIVE');
         };
     }
+    
+    // Optional override, when INDEX method is called and this method returns true, the returend JSON will contain 
+    // count data used for pagination e.g. {result_count: 10, total_count: 45, data: [...results]}
+    protected function withCountMetadata($request) {
+        return false;
+    }
+
 }
 ```
 
@@ -177,7 +184,38 @@ Generated REST resource routes are in the following format:
 * **sort** - Filed on which to sort returned resources (e.g. 'first_name')
 * **order** - Ordering of returend resources ('asc' or 'desc')
 
-Example HTTP GET request: `http://site.com/api/resource?skip=30&limit=15&sort=first_name&order=desc`
+**Example HTTP GET request:** `http://site.com/api/resource?skip=30&limit=15&sort=first_name&order=desc`
+
+**Response:**
+
+_Headers:_
+```
+Content-type: application/json
+X-Total-Count: 45
+X-Result-Count: 10
+```
+
+_Body when method withCountMetadata() returns false:_
+```
+[
+    {id: 1, name: 'Resource name', description: 'Some resource description'}, 
+    {id: 1, name: 'Resource name', description: 'Some resource description'}, 
+    {id: 1, name: 'Resource name', description: 'Some resource description'}
+]
+```
+
+_Body when method withCountMetadata() returns true:_
+```
+{
+    result_count: 10, 
+    total_count: 45,
+    data: [
+        {id: 1, name: 'Resource name', description: 'Some resource description'}, 
+        {id: 1, name: 'Resource name', description: 'Some resource description'}, 
+        {id: 1, name: 'Resource name', description: 'Some resource description'}
+    ]
+}
+```
 
 LICENSE
 ---

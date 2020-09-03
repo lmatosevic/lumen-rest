@@ -15,6 +15,13 @@ abstract class RestController extends BaseController {
      * sort - Filed on which to sort returned resources (e.g. 'first_name')
      * order - Ordering of returend resources ('asc' or 'desc')
      *
+     * There are two ways this method can return resulting JSON. First is as a plain list of objects:
+     * e.g. [result1, result2, result3, ...] or second format with count metadata:
+     * e.g. [result_count: 10, total_count: 45, data: [result1, result2, result3, ...]]
+     *
+     * To use the second JSON format with count metadata, override and return true value from withCountMetadata($request)
+     * method.
+     *
      * Also this method can return following count headers, primarly used for paginated requests:
      * X-Result-Count - number of items in resulting set that match search criteria (number of returned items)
      * X-Total-Count - number of total items in database that match search criteria (without skip, limit params)
